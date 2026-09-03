@@ -9,6 +9,6 @@
  * 注意：anon key 是公开可见的前端密钥，安全由 RLS 策略保证，不要填 service_role key。
  * ============================================================= */
 window.APP_CONFIG = {
-  supabaseUrl: '',
-  supabaseAnonKey: ''
+  supabaseUrl: 'https://flcctajtgoyzzrdkdsof.supabase.co',
+  supabaseAnonKey: 'sb_publishable_Fauh0Z9v8wAEwyB_Jqkf7A_O_llF9Ex'
 };

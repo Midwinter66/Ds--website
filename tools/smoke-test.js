@@ -17,7 +17,7 @@ const logs = [];
 const vc = new VirtualConsole();
 vc.on('jsdomError', (e) => {
   if (/Not implemented: HTMLCanvasElement/.test(e.message)) return;
-  errors.push('[jsdomError] ' + e.message + (e.detail ? '\n   ' + e.detail : ''));
+  errors.push('[jsdomError] ' + e.message + (e.detail ? '\n   ' + e.detail : '') + '\n   STACK: ' + String(e.stack || '').split('\n').slice(0,6).join('\n   '));
 });
 vc.on('error', (...a) => errors.push('[console.error] ' + a.join(' ')));
 vc.on('warn', (...a) => logs.push('[warn] ' + a.join(' ')));
@@ -55,6 +55,30 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     virtualConsole: vc,
     beforeParse(window) {
       window.HTMLCanvasElement.prototype.getContext = function () { return fakeCtx(); };
+      // 模拟 Supabase SDK 已加载，避免 jsdom 拉不动 CDN 导致 CloudStore 进 error 状态
+      window.supabase = {
+        createClient: function () {
+          return {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              getSession: async () => ({ data: { session: null }, error: null }),
+              onAuthStateChange: function () { return { data: { subscription: { unsubscribe() {} } } }; },
+              signInWithPassword: async () => ({ data: { user: null, session: null }, error: { message: 'stub' } }),
+              signUp: async () => ({ data: { user: null, session: null }, error: { message: 'stub' } }),
+              signOut: async () => ({ error: null })
+            },
+            from: function () {
+              return {
+                select: function () { return { eq: function () { return { data: [], error: null }; } }; },
+                upsert: async () => ({ data: null, error: null }),
+                delete: function () { return { eq: function () { return Promise.resolve({ error: null }); } }; }
+              };
+            },
+            rpc: async () => ({ data: null, error: null })
+          };
+        }
+      };
     }
   });
   const { window } = dom;
@@ -96,11 +120,11 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     '实际 ' + doc.querySelectorAll('#sidebar .desk-nav-item').length);
   check('顶栏已渲染', !!doc.querySelector('.topbar-title'));
   check('同步状态 chip', !!doc.getElementById('sync-chip'));
-  check('云同步降级为本地模式',
-    App.CloudStore && App.CloudStore.getState().status === 'local',
-    App.CloudStore ? App.CloudStore.getState().status : 'CloudStore 未定义');
-  check('顶栏 chip 文案为「本地模式」',
-    (doc.getElementById('sync-chip') || {}).textContent === '本地模式',
+  check('云同步进入云端模式（已配置 config）',
+    App.CloudStore && App.CloudStore.getState().mode === 'cloud',
+    App.CloudStore ? App.CloudStore.getState().mode + '/' + App.CloudStore.getState().status : 'CloudStore 未定义');
+  check('顶栏 chip 文案为「未登录」',
+    (doc.getElementById('sync-chip') || {}).textContent === '未登录',
     (doc.getElementById('sync-chip') || {}).textContent);
 
   const modules = Object.keys((App.Router && App.Router.modules) || {});
@@ -151,8 +175,9 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   App.Router.navigate('settings');
   await wait(80);
   check('设置页云同步面板', !!doc.getElementById('cloud-panel'));
-  check('面板提示未配置 config',
-    /纯本地模式/.test((doc.getElementById('cloud-panel') || {}).textContent || ''));
+  check('面板进入云端登录态（含邮箱输入框）',
+    !!doc.getElementById('cloud-email'),
+    (doc.getElementById('cloud-status-text') || {}).textContent || '无状态文案');
 
   doc.getElementById('desk-entry').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
   await wait(80);
