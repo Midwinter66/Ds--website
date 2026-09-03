@@ -1,0 +1,31 @@
+/* 暖冬主题基础样式 */
+:root {
+  --bg-color: #f5f1ea;
+  --bg-secondary: #faf6ef;
+  --text-primary: #2c2620;
+  --text-secondary: #4a4238;
+  --text-tertiary: #7a7268;
+  --border-color: #e8e0d2;
+  --accent-warm: #b8860b;
+  --accent-warm-light: #f0e6d6;
+  --accent-cool: #6b7b8a;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "PingFang SC", "Microsoft YaHei", serif;
+  --font-brush: "Ma Shan Zheng", "ZCOOL XiaoWei", "STKaiti", "KaiTi", "楷体", cursive;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-primary);
+  background: var(--bg-color);
+  min-height: 100vh;
+}
+a { color: var(--accent-warm); text-decoration: none; transition: color 0.2s; }
+a:hover { color: #d4a017; }
+::selection { background: var(--accent-warm-light); color: var(--text-primary); }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
