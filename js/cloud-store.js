@@ -38,6 +38,7 @@
   var SDK_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
 
   var client = null;
+  var anonClient = null; // 匿名只读 client，用于首页拉公开文章
   var dirty = {};
   var pushTimer = null;
   var pullTimer = null;
@@ -368,6 +369,20 @@
     fullSync: fullSync,
     markDirtyForPush: function (key) { dirty[key] = true; },
     getState: function () { return state; },
+    // 暴露原始 client 供 posts/notes 等行级模块做直接 CRUD
+    getClient: function () { return client; },
+    // 云端就绪（已登录）？
+    isReady: function () { return state.mode === 'cloud' && !!client && !!state.user; },
+    // 匿名只读客户端（用于首页拉公开文章，无需登录）
+    getAnonClient: function () {
+      if (anonClient) return anonClient;
+      var cfg = root.APP_CONFIG || {};
+      if (!cfg.supabaseUrl || !cfg.supabaseAnonKey || !root.supabase) return null;
+      anonClient = root.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+      });
+      return anonClient;
+    },
     statusText: function () {
       var map = {
         init: '初始化中',

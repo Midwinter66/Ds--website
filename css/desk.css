@@ -462,3 +462,108 @@ textarea { resize: vertical; min-height: 64px; }
 
 #game-snake-canvas { max-width: 100%; height: auto; margin-top: 12px; border-radius: var(--radius-md); }
 .game-card { display: block; }
+
+/* ================= 写作：Markdown 编辑器 ================= */
+.editor-split { display:grid; grid-template-columns:1fr 1fr; gap:12px; min-height:420px; }
+.editor-pane { min-height:420px; }
+.editor-textarea {
+  width:100%; min-height:420px; padding:16px; border:1px solid var(--border);
+  border-radius:var(--radius-md); background:var(--bg-input); color:var(--text);
+  font-family:'Consolas','Menlo',monospace; font-size:14px; line-height:1.7;
+  resize:vertical; outline:none; transition:border-color .15s;
+}
+.editor-textarea:focus { border-color:var(--accent); }
+.editor-preview {
+  padding:16px; border:1px solid var(--border); border-radius:var(--radius-md);
+  background:var(--bg-card); overflow:auto; min-height:420px;
+}
+.form-checkbox { display:flex; align-items:center; gap:6px; font-size:14px; color:var(--text-secondary); cursor:pointer; }
+.form-checkbox input { margin:0; }
+
+.post-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+.post-row:last-child { border-bottom:none; }
+.post-row-main { flex:1; min-width:0; }
+.post-row-title { font-size:15px; font-weight:600; color:var(--text); }
+.post-row-meta { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.post-row-tags { margin-top:4px; }
+.post-row-actions { display:flex; gap:6px; flex-shrink:0; }
+.badge-draft { display:inline-block; padding:1px 6px; font-size:11px; border-radius:4px; background:var(--accent-soft); color:var(--accent); font-weight:600; margin-left:6px; }
+
+/* ================= 便签 ================= */
+.note-composer { padding:16px; }
+.note-input { min-height:80px !important; }
+.note-composer-row { display:flex; gap:8px; margin-top:8px; }
+.note-toolbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.note-tags { display:flex; flex-wrap:wrap; gap:6px; flex:1; }
+.note-tag-chip {
+  display:inline-flex; align-items:center; gap:4px; padding:4px 10px;
+  border-radius:999px; background:var(--bg-hover); color:var(--text-secondary);
+  font-size:12px; cursor:pointer; transition:all .15s;
+}
+.note-tag-chip em { font-style:normal; color:var(--text-muted); font-size:11px; }
+.note-tag-chip.active { background:var(--accent-soft); color:var(--accent); }
+.note-search { max-width:200px; }
+.notes-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px; align-items:start;
+}
+.note-card {
+  padding:14px; border-radius:var(--radius-md); background:var(--bg-card);
+  border:1px solid var(--border); break-inside:avoid; display:flex; flex-direction:column; gap:8px;
+}
+.note-card.color-yellow { background:#fff7d6; border-color:#f0d97a; }
+.note-card.color-green  { background:#e3f5e3; border-color:#a8d8a8; }
+.note-card.color-blue    { background:#dde9f7; border-color:#9db8d8; }
+.note-card.color-pink    { background:#fbe0ec; border-color:#d8a8c0; }
+[data-theme="dark"] .note-card.color-yellow { background:#3a3418; border-color:#5a4d22; color:var(--text); }
+[data-theme="dark"] .note-card.color-green  { background:#1c3a1c; border-color:#2e4d2e; color:var(--text); }
+[data-theme="dark"] .note-card.color-blue    { background:#1a2a3a; border-color:#2e4d6a; color:var(--text); }
+[data-theme="dark"] .note-card.color-pink    { background:#3a1c2a; border-color:#5a2e44; color:var(--text); }
+.note-card-body { font-size:14px; line-height:1.6; flex:1; }
+.note-card-body p { margin:0 0 6px; }
+.note-card-body p:last-child { margin-bottom:0; }
+.note-card-tags { display:flex; flex-wrap:wrap; gap:4px; }
+.note-card-tag { font-size:11px; color:var(--text-muted); }
+.note-card-foot { display:flex; justify-content:space-between; align-items:center; padding-top:4px; border-top:1px dashed var(--border); }
+.note-card-date { font-size:11px; color:var(--text-muted); }
+
+/* ================= 模态 ================= */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000;
+  display:flex; align-items:center; justify-content:center; padding:24px;
+  opacity:0; transition:opacity .2s;
+}
+.modal-overlay.visible { opacity:1; }
+.modal {
+  background:var(--bg-card); border-radius:var(--radius-md); max-width:560px; width:100%;
+  max-height:88vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.3);
+  transform:translateY(20px); transition:transform .2s;
+}
+.modal.modal-lg { max-width:760px; }
+.modal-overlay.visible .modal { transform:translateY(0); }
+.modal-head { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border); }
+.modal-title { font-weight:600; color:var(--text); font-size:16px; }
+.modal-x { background:none; border:none; font-size:24px; cursor:pointer; color:var(--text-muted); line-height:1; padding:0; }
+.modal-x:hover { color:var(--text); }
+.modal-body { padding:18px; overflow:auto; flex:1; }
+.modal-foot { padding:12px 18px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; }
+
+/* ================= Markdown 正文 ================= */
+.post-article { font-size:15px; line-height:1.8; color:var(--text); }
+.post-article h1, .post-article h2, .post-article h3 { margin:1.4em 0 .6em; line-height:1.3; font-weight:600; }
+.post-article h1 { font-size:1.6em; border-bottom:1px solid var(--border); padding-bottom:.3em; }
+.post-article h2 { font-size:1.35em; }
+.post-article h3 { font-size:1.15em; }
+.post-article p { margin:0 0 .9em; }
+.post-article ul, .post-article ol { margin:0 0 .9em; padding-left:1.6em; }
+.post-article li { margin:.25em 0; }
+.post-article code { background:var(--bg-hover); padding:2px 6px; border-radius:4px; font-family:monospace; font-size:.9em; }
+.post-article pre { background:var(--bg-secondary); padding:14px; border-radius:var(--radius-sm); overflow:auto; margin:0 0 1em; }
+.post-article pre code { background:none; padding:0; }
+.post-article blockquote { border-left:3px solid var(--accent); padding-left:14px; margin:0 0 1em; color:var(--text-secondary); }
+.post-article img { max-width:100%; border-radius:var(--radius-sm); }
+.post-article a { color:var(--accent); text-decoration:none; }
+.post-article a:hover { text-decoration:underline; }
+.post-article table { border-collapse:collapse; margin:0 0 1em; }
+.post-article th, .post-article td { border:1px solid var(--border); padding:6px 10px; }
+.post-article th { background:var(--bg-hover); }

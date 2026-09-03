@@ -8,6 +8,8 @@
 
   var MODULES = [
     { id: 'home',      name: '首页',     icon: '\u{1F3E0}', category: 'daily' },
+    { id: 'posts',     name: '写作',     icon: '\u{1F58A}\uFE0F', category: 'content' },
+    { id: 'notes',     name: '便签',     icon: '\u{1F4DD}', category: 'content' },
     { id: 'plan',      name: '今日计划',  icon: '\u{1F4CB}', category: 'daily' },
     { id: 'research',  name: '科研进展',  icon: '\u{1F52C}', category: 'research' },
     { id: 'psychology',name: '心理学',   icon: '\u{1F9E0}', category: 'life' },
@@ -18,6 +20,7 @@
   ];
 
   var CATEGORIES = [
+    { id: 'content', name: '创作' },
     { id: 'daily',    name: '日常' },
     { id: 'research', name: '科研' },
     { id: 'life',     name: '生活' },
@@ -118,6 +121,8 @@
 
     // 3. 注册所有模块
     if (root.App.Home) Router.register('home', root.App.Home);
+    if (root.App.Posts) Router.register('posts', root.App.Posts);
+    if (root.App.Notes) Router.register('notes', root.App.Notes);
     if (root.App.Plan) Router.register('plan', root.App.Plan);
     if (root.App.Research) Router.register('research', root.App.Research);
     if (root.App.Psychology) Router.register('psychology', root.App.Psychology);

@@ -100,26 +100,23 @@
   // ========== 分类筛选 ==========
   function initCategoryFilter() {
     const navItems = document.querySelectorAll('.nav-item');
-    const postCards = document.querySelectorAll('.post-card');
-    const monthGroups = document.querySelectorAll('.month-group');
-    const yearGroups = document.querySelectorAll('.year-group');
     const noResults = document.getElementById('no-results');
     if (navItems.length === 0) return;
 
     function filterByCategory(category) {
       let visibleCount = 0;
-      postCards.forEach(card => {
+      document.querySelectorAll('.post-card').forEach(card => {
         const cardCategory = card.dataset.category;
         if (category === 'all' || cardCategory === category) {
           card.classList.remove('hidden'); visibleCount++;
         } else { card.classList.add('hidden'); }
       });
-      monthGroups.forEach(group => {
+      document.querySelectorAll('.month-group').forEach(group => {
         const visiblePosts = group.querySelectorAll('.post-card:not(.hidden)');
         if (visiblePosts.length > 0) group.classList.remove('hidden');
         else group.classList.add('hidden');
       });
-      yearGroups.forEach(group => {
+      document.querySelectorAll('.year-group').forEach(group => {
         const visibleMonths = group.querySelectorAll('.month-group:not(.hidden)');
         if (visibleMonths.length > 0) group.classList.remove('hidden');
         else group.classList.add('hidden');
@@ -138,6 +135,12 @@
         filterByCategory(category);
       });
     });
+
+    // 动态文章注入后重新应用当前筛选
+    document.addEventListener('blog:cards-injected', () => {
+      const active = document.querySelector('.nav-item.active');
+      filterByCategory(active ? active.dataset.category : 'all');
+    });
   }
 
   // ========== 搜索功能 ==========
@@ -146,9 +149,6 @@
     const searchHistory = document.getElementById('search-history');
     const historyList = document.getElementById('history-list');
     const clearHistoryBtn = document.getElementById('clear-history');
-    const postCards = document.querySelectorAll('.post-card');
-    const monthGroups = document.querySelectorAll('.month-group');
-    const yearGroups = document.querySelectorAll('.year-group');
     const noResults = document.getElementById('no-results');
     if (!searchInput) return;
 
@@ -185,7 +185,7 @@
     function performSearch(keyword) {
       keyword = keyword.trim().toLowerCase();
       let visibleCount = 0;
-      postCards.forEach(card => {
+      document.querySelectorAll('.post-card').forEach(card => {
         const title = card.dataset.title?.toLowerCase() || '';
         const summary = card.dataset.summary?.toLowerCase() || '';
         const tags = card.dataset.tags?.toLowerCase() || '';
@@ -195,12 +195,12 @@
           card.classList.remove('hidden'); visibleCount++;
         } else { card.classList.add('hidden'); }
       });
-      monthGroups.forEach(group => {
+      document.querySelectorAll('.month-group').forEach(group => {
         const visiblePosts = group.querySelectorAll('.post-card:not(.hidden)');
         if (visiblePosts.length > 0) group.classList.remove('hidden');
         else group.classList.add('hidden');
       });
-      yearGroups.forEach(group => {
+      document.querySelectorAll('.year-group').forEach(group => {
         const visibleMonths = group.querySelectorAll('.month-group:not(.hidden)');
         if (visibleMonths.length > 0) group.classList.remove('hidden');
         else group.classList.add('hidden');
@@ -244,6 +244,11 @@
       });
     }
     renderHistory();
+
+    // 动态文章注入后重新应用当前搜索
+    document.addEventListener('blog:cards-injected', () => {
+      performSearch(searchInput.value);
+    });
   }
 
   // ========== 年份折叠 ==========

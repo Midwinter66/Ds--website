@@ -56,6 +56,19 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     beforeParse(window) {
       window.HTMLCanvasElement.prototype.getContext = function () { return fakeCtx(); };
       // 模拟 Supabase SDK 已加载，避免 jsdom 拉不动 CDN 导致 CloudStore 进 error 状态
+      // chain 返回 thenable，同时支持 .eq/.order/.select 链式调用
+      const thenable = (data, error = null) => {
+        const p = Promise.resolve({ data, error });
+        p.eq = () => p; p.order = () => p; p.limit = () => p;
+        p.single = () => Promise.resolve({ data: (data && data[0]) || null, error: null });
+        return p;
+      };
+      const fromChain = () => ({
+        select: () => ({ eq: () => thenable([]), order: () => thenable([]), limit: () => thenable([]) }),
+        insert: () => ({ select: () => ({ single: () => thenable([{ id: 'fake' }]) }) }),
+        update: () => ({ eq: () => ({ select: () => ({ single: () => thenable([{ id: 'fake' }]) }) }) }),
+        delete: () => ({ eq: () => thenable([], null) })
+      });
       window.supabase = {
         createClient: function () {
           return {
@@ -68,17 +81,14 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
               signUp: async () => ({ data: { user: null, session: null }, error: { message: 'stub' } }),
               signOut: async () => ({ error: null })
             },
-            from: function () {
-              return {
-                select: function () { return { eq: function () { return { data: [], error: null }; } }; },
-                upsert: async () => ({ data: null, error: null }),
-                delete: function () { return { eq: function () { return Promise.resolve({ error: null }); } }; }
-              };
-            },
+            from: function () { return fromChain(); },
             rpc: async () => ({ data: null, error: null })
           };
         }
       };
+      // 模拟 marked + DOMPurify（CDN 在 jsdom 拉不动）
+      window.marked = { parse: (md) => '<p>' + String(md || '').replace(/\n/g, '<br>') + '</p>' };
+      window.DOMPurify = { sanitize: (html) => html };
     }
   });
   const { window } = dom;
@@ -86,6 +96,8 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   await wait(50);
 
   for (const src of srcs) {
+    // 跳过 CDN 脚本（marked/DOMPurify 已在 beforeParse stub）
+    if (/^https?:\/\//.test(src)) continue;
     await new Promise((resolve) => {
       const s = doc.createElement('script');
       s.src = src.startsWith('http') ? src : new URL(src, BASE).href;
@@ -111,12 +123,17 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   check('App.Toast', !!App.Toast);
   check('App.Game2048', !!App.Game2048);
   check('App.Snake', !!App.Snake);
+  check('App.Posts', !!App.Posts);
+  check('App.Notes', !!App.Notes);
+  check('App.BlogSync', !!App.BlogSync);
+  check('marked 库', typeof window.marked === 'object' || typeof window.marked === 'function');
+  check('DOMPurify 库', typeof window.DOMPurify === 'object' || typeof window.DOMPurify === 'function');
 
   ['sidebar', 'topbar', 'main', 'desk-app', 'desk-entry', 'to-blog-btn'].forEach((id) =>
     check('容器 #' + id, !!doc.getElementById(id))
   );
 
-  check('侧栏导航项 = 8', doc.querySelectorAll('#sidebar .desk-nav-item').length === 8,
+  check('侧栏导航项 = 10', doc.querySelectorAll('#sidebar .desk-nav-item').length === 10,
     '实际 ' + doc.querySelectorAll('#sidebar .desk-nav-item').length);
   check('顶栏已渲染', !!doc.querySelector('.topbar-title'));
   check('同步状态 chip', !!doc.getElementById('sync-chip'));
@@ -128,7 +145,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     (doc.getElementById('sync-chip') || {}).textContent);
 
   const modules = Object.keys((App.Router && App.Router.modules) || {});
-  check('已注册模块数 = 8', modules.length === 8, modules.join(','));
+  check('已注册模块数 = 10', modules.length === 10, modules.join(','));
   for (const m of modules) {
     try {
       App.Router.navigate(m);
@@ -178,6 +195,24 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   check('面板进入云端登录态（含邮箱输入框）',
     !!doc.getElementById('cloud-email'),
     (doc.getElementById('cloud-status-text') || {}).textContent || '无状态文案');
+
+  // 写作模块（未登录 → 显示登录提示，不报错）
+  App.Router.navigate('posts');
+  await wait(60);
+  const postsMain = doc.getElementById('main');
+  check('写作模块未登录降级提示', postsMain && /登录/.test(postsMain.textContent || ''),
+    postsMain ? postsMain.textContent.slice(0, 40) : '无 #main');
+
+  // 便签模块（未登录 → 显示登录提示，不报错）
+  App.Router.navigate('notes');
+  await wait(60);
+  const notesMain = doc.getElementById('main');
+  check('便签模块未登录降级提示', notesMain && /登录/.test(notesMain.textContent || ''),
+    notesMain ? notesMain.textContent.slice(0, 40) : '无 #main');
+
+  // BlogSync 启动无报错（已注入字段存在，fetch 返回空数组）
+  check('BlogSync 暴露 start/fetchPublished',
+    typeof App.BlogSync.start === 'function' && typeof App.BlogSync.fetchPublished === 'function');
 
   doc.getElementById('desk-entry').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
   await wait(80);
