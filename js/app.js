@@ -32,7 +32,7 @@
     CATEGORIES.forEach(function(cat) {
       html += '<div class="nav-category">' + cat.name + '</div>';
       MODULES.filter(function(m) { return m.category === cat.id; }).forEach(function(m) {
-        html += '<div class="nav-item" data-module="' + m.id + '">' +
+        html += '<div class="desk-nav-item" data-module="' + m.id + '">' +
                 '<span class="nav-icon">' + m.icon + '</span>' +
                 '<span>' + m.name + '</span>' +
                 '</div>';
@@ -41,7 +41,7 @@
     sidebar.innerHTML = html;
 
     // 绑定导航点击
-    var navItems = sidebar.querySelectorAll('.nav-item');
+    var navItems = sidebar.querySelectorAll('.desk-nav-item');
     navItems.forEach(function(item) {
       item.addEventListener('click', function() {
         var moduleId = this.getAttribute('data-module');

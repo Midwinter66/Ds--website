@@ -14,10 +14,19 @@
 
     navigate: function(name) {
       if (!this.modules[name]) return;
+
+      // 离开上一个模块：调用 destroy 清理定时器 / 事件监听
+      if (this.current && this.current !== name) {
+        var prev = this.modules[this.current];
+        if (prev && typeof prev.destroy === 'function') {
+          try { prev.destroy.call(prev); } catch (e) { console.error(e); }
+        }
+      }
+
       this.current = name;
 
       // 更新侧边栏高亮
-      var navItems = document.querySelectorAll('.nav-item');
+      var navItems = document.querySelectorAll('.desk-nav-item');
       navItems.forEach(function(item) {
         if (item.getAttribute('data-module') === name) {
           item.classList.add('active');

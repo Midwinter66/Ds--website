@@ -279,6 +279,8 @@
     // UI 接口
     render: ui.render.bind(ui),
     afterRender: ui.afterRender.bind(ui),
+    // 离开模块时由 Router 调用：停掉定时器与键盘监听，避免后台空跑
+    destroy: function() { this._resetState(); },
     // 仅供测试用
     _setView: function(v) { currentView = v; },
     _getView: function() { return currentView; },

@@ -70,6 +70,8 @@
     }
 
     function enterSite() {
+      var desk = document.getElementById('desk-app');
+      if (desk && desk.classList.contains('active')) return;
       if (welcome.classList.contains('fade-out')) return;
       welcome.classList.add('fade-out');
       mainApp.classList.remove('hidden');
