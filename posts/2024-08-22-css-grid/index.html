@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CSS Grid 布局完全指南 - 冬</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet"><style>:root{--bg-color:#f5f1ea;--bg-secondary:#faf6ef;--text-primary:#2c2620;--text-secondary:#4a4238;--text-tertiary:#7a7268;--border-color:#e8e0d2;--accent-warm:#b8860b;--accent-warm-light:#f0e6d6;--accent-cool:#6b7b8a;--font-serif:"Noto Serif SC","Source Han Serif SC","Songti SC","PingFang SC","Microsoft YaHei",serif;--font-brush:"Ma Shan Zheng","ZCOOL XiaoWei","STKaiti","KaiTi","楷体",cursive;}</style><link rel="stylesheet" href="/Ds--website/styles/base.css"><link rel="stylesheet" href="/Ds--website/_astro/_slug_.CI7gfewr.css"></head><body><main class="post-page"><article class="post-container"><header class="post-header"><a href="/Ds--website/" class="back-link">← 返回</a><div class="post-meta"><span class="post-category" title="知识积累">积素</span><span class="post-date">2024年08月22日</span></div><h1 class="post-title">CSS Grid 布局完全指南</h1><p class="post-summary">从基础到进阶，全面掌握 CSS Grid 布局。两维布局的强大工具，让页面排版变得简单优雅。</p><div class="post-tags"><span class="post-tag">#CSS</span><span class="post-tag">#前端</span><span class="post-tag">#布局</span></div></header><div class="post-content"><h2>为什么需要 Grid</h2><p>Flexbox 是一维布局，而 Grid 是二维布局。</p><p>当你需要同时控制行和列的时候，Grid 就是最好的选择。</p><h2>基础概念</h2><h3>容器和项目</h3><pre><code>.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+}</code></pre><h3>网格线和网格轨道</h3><ul><li>网格线（Grid Line）：分隔单元格的线</li><li>网格轨道（Grid Track）：两条网格线之间的空间</li><li>网格单元格（Grid Cell）：最小的单位</li></ul><h2>常用属性</h2><h3>容器属性</h3><table><thead><tr><th>属性</th><th>作用</th></tr></thead><tbody><tr><td><code>grid-template-columns</code></td><td>定义列</td></tr><tr><td><code>grid-template-rows</code></td><td>定义行</td></tr><tr><td><code>gap</code></td><td>间距</td></tr><tr><td><code>grid-template-areas</code></td><td>命名区域</td></tr><tr><td><code>justify-items</code></td><td>水平对齐</td></tr><tr><td><code>align-items</code></td><td>垂直对齐</td></tr></tbody></table><h3>项目属性</h3><table><thead><tr><th>属性</th><th>作用</th></tr></thead><tbody><tr><td><code>grid-column</code></td><td>列起始/结束</td></tr><tr><td><code>grid-row</code></td><td>行起始/结束</td></tr><tr><td><code>grid-area</code></td><td>区域名称</td></tr></tbody></table><h2>实用技巧</h2><h3>1. 响应式网格</h3><pre><code>.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}</code></pre><h3>2. 经典圣杯布局</h3><pre><code>.container {
+  display: grid;
+  grid-template:
+    "header header header" auto
+    "nav main aside" 1fr
+    "footer footer footer" auto
+    / 200px 1fr 200px;
+}</code></pre><h3>3. 居中神器</h3><pre><code>.center {
+  display: grid;
+  place-items: center;
+}</code></pre><h2>Grid vs Flexbox</h2><table><thead><tr><th>场景</th><th>用哪个</th></tr></thead><tbody><tr><td>一维布局（导航栏、列表）</td><td>Flexbox</td></tr><tr><td>二维布局（卡片网格、页面整体）</td><td>Grid</td></tr><tr><td>内容驱动（内容多少决定布局）</td><td>Flexbox</td></tr><tr><td>布局驱动（先有布局再放内容）</td><td>Grid</td></tr></tbody></table><p>两者不是替代关系，而是配合使用。</p></div><nav class="post-nav"><a href="/Ds--website/posts/2025-06-10-deep-work/" class="post-nav-prev"><span class="nav-label">← 上一篇</span><span class="nav-title">《深度工作》读书笔记</span></a><a href="/Ds--website/posts/2024-03-15-astro-intro/" class="post-nav-next"><span class="nav-label">下一篇 →</span><span class="nav-title">Astro 框架入门指南</span></a></nav></article></main></body></html>
